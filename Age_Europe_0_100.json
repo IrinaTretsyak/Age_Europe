@@ -1,0 +1,159 @@
+{
+	"info": {
+		"_postman_id": "6700da86-544c-4adb-bbea-6a5c384b1c04",
+		"name": "Age_Europe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Age_Europe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Проверка кода ответа от сервера\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Сравнение идентичности значения поля age в ответе и запросе \", () => {\r",
+							"  const requestBody = JSON.parse(request.data.age);\r",
+							"  const jsonData = pm.response.json();\r",
+							"  const responseAgeInt = parseInt(jsonData['age'])\r",
+							"  pm.expect(responseAgeInt).to.equal(requestBody);\r",
+							"  });\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "age",
+							"value": "1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://116.203.27.46:5002/age_europe",
+					"protocol": "http",
+					"host": [
+						"116",
+						"203",
+						"27",
+						"46"
+					],
+					"port": "5002",
+					"path": [
+						"age_europe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "age_europ_0-100",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"for (let i=0; i<=100;i++) {\r",
+							"    pm.environment.set(\"curInt\", i);\r",
+							"    \r",
+							"    const postRequest = {\r",
+							"    url: \"http://116.203.27.46:5002/age_europe\",\r",
+							"    method: \"POST\",\r",
+							"    header: {\"content-type\": \"multipart/form-data\"},\r",
+							"    body: {\r",
+							"        mode: \"formdata\",\r",
+							"        formdata: [\r",
+							"        {key: \"age\", value: pm.environment.get('curInt'), disabled: false, description: {content:\"\", type:\"text/plain\"}},\r",
+							"        ]},\r",
+							"    }\r",
+							"\r",
+							"\r",
+							"    pm.sendRequest(postRequest, (error, response) => {\r",
+							"        \r",
+							"         if (error) {\r",
+							"             console.error(error)\r",
+							"            // Если код ответа 200, то преобразуем в JSON\r",
+							"            } if (response.code === 200) {\r",
+							"            \r",
+							"            const jsonData = response.json();\r",
+							"            // Получаем возвраст из ответа и преобразуем в число\r",
+							"            const responseAgeInt = parseInt(jsonData.age)\r",
+							"\r",
+							"            //Записываем тип возраста из ответа в переменную\r",
+							"            const responseAgeType = jsonData.age_type\r",
+							"\r",
+							"            // Проверяем до от 0 до 17 лет\r",
+							"            if (responseAgeInt >= 0 && responseAgeInt <= 17) {\r",
+							"                pm.test(\"Underage 0-17\", () => {\r",
+							"                    pm.expect(responseAgeType).to.eql(\"underage\");\r",
+							"                    });\r",
+							"            }\r",
+							"            \r",
+							"            // Проверяем от 18 до 50 лет\r",
+							"            if (responseAgeInt >= 18 && responseAgeInt <= 50) {\r",
+							"                pm.test(\"Adult 18-50\", () => {\r",
+							"                    pm.expect(responseAgeType).to.eql(\"adult\");\r",
+							"                    });\r",
+							"            }\r",
+							"\r",
+							"            // Проверяем от 51 до 100 лет\r",
+							"            if (responseAgeInt >= 51 && responseAgeInt <= 100) {\r",
+							"                pm.test(\"Antiquity 51-100\", () => {\r",
+							"                    pm.expect(responseAgeType).to.eql(\"antiquity\");\r",
+							"                    });\r",
+							"            }\r",
+							"        }\r",
+							"    })\r",
+							"}\r",
+							"         \r",
+							"         "
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://116.203.27.46:5002/age_europe",
+					"protocol": "http",
+					"host": [
+						"116",
+						"203",
+						"27",
+						"46"
+					],
+					"port": "5002",
+					"path": [
+						"age_europe"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
